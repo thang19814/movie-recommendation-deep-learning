@@ -1,4 +1,0 @@
-﻿Mô hình,RMSE,MAE,Thời gian huấn luyện (s)
-Item-based kNN,0.9712,0.7589,0.8
-Matrix Factorization (SVD),0.9208,0.7251,28.8
-NCF (GMF + MLP) - Đề xuất,0.9313,0.7353,3.9
