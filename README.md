@@ -1,278 +1,180 @@
-## 1. Overview
+# 🎬 Movie Recommendation System using Deep Learning
 
-**“Movie Recommendation Application Development for Personalized User Experience Using Deep Learning”** is a Data Science project that develops a personalized movie recommendation system from user rating behavior.
+A personalized **Movie Recommendation System** built with **Neural Collaborative Filtering (NCF)** and a custom NumPy implementation. The project uses the **MovieLens 100K dataset**, compares several recommendation approaches, and provides an interactive **Streamlit Web PoC**.
 
-The project follows an **experimental research + software development** approach, covering data collection and preprocessing, exploratory data analysis (EDA), baseline recommender models, Neural Collaborative Filtering (NCF), quantitative evaluation, and a Streamlit-based Web Proof of Concept.
+## 📌 Project Overview
 
-The project focuses not only on rating prediction accuracy but also on bridging the gap between an academic model and an interactive application.
+```text
+MovieLens 100K
+      ↓
+Data Collection
+      ↓
+Data Preprocessing
+      ↓
+Exploratory Data Analysis (EDA)
+      ↓
+Recommendation Models
+      ├── Item-based kNN
+      ├── Matrix Factorization
+      └── Neural Collaborative Filtering (NCF)
+                ↓
+        GMF + MLP Architecture
+                ↓
+        Model Evaluation
+                ↓
+        Model Export
+                ↓
+       Streamlit Web PoC
+                ↓
+       Top-N Recommendations
+```
 
-## 2. Problem and Motivation
+## ✨ Features
 
-Online entertainment platforms expose users to a very large amount of content, creating an information overload problem when searching for suitable movies.
+- Data preprocessing and cleaning
+- Exploratory Data Analysis (EDA)
+- User/movie ID encoding
+- User–item matrix sparsity analysis
+- Item-based kNN recommendation
+- Matrix Factorization
+- Neural Collaborative Filtering (NCF)
+- GMF + MLP architecture
+- Adam optimization
+- Early Stopping
+- RMSE and MAE evaluation
+- Export of trained NCF parameters
+- Interactive Streamlit Web PoC
+- Top-N personalized recommendations
+- Filtering of movies already rated by the selected user
 
-Traditional recommendation methods such as Item-based kNN and Matrix Factorization have limitations:
+## 🧠 Neural Collaborative Filtering
 
-- High sparsity in the User–Item matrix.
-- High computational cost for neighborhood-based methods at scale.
-- Limited linear representation in traditional Matrix Factorization.
-- A gap between notebook-based experimentation and real-world deployment.
+The main recommendation model is a custom NumPy implementation of NCF.
 
-The project therefore explores **Neural Collaborative Filtering (NCF)** to learn latent representations and model nonlinear User–Item interactions.
+```text
+User ID ──→ User Embedding ──→ GMF ──┐
+                                     ├──→ Concatenate ──→ Output
+Movie ID ─→ Movie Embedding ─→ GMF ──┤
+                                     │
+User ID ──→ User Embedding ──→ MLP ──┤
+Movie ID ─→ Movie Embedding ─→ MLP ──┘
+```
 
-## 3. Objectives
+| Component | Configuration |
+|---|---|
+| GMF embedding | 8 |
+| MLP embedding | 8 |
+| MLP hidden layers | 16 → 8 |
+| Optimizer | Adam |
+| Training control | Early Stopping |
 
-- Analyze and clean MovieLens 100K.
-- Construct the User–Item matrix and analyze sparsity.
-- Build **Item-based kNN** and **Matrix Factorization** baselines.
-- Develop an **NCF architecture combining GMF and MLP**.
-- Optimize the model with Adam and Early Stopping.
-- Compare models using RMSE, MAE, and training time.
-- Integrate the trained NCF model into a Streamlit Web Proof of Concept.
+The NCF model is implemented directly with NumPy rather than a high-level deep learning framework.
 
-## 4. Dataset
+## 📊 Dataset
 
 The project uses the **MovieLens 100K** dataset.
 
-After joining and preprocessing:
+After preprocessing and joining rating data with movie metadata:
 
-| Metric | Value |
-|---|---:|
-| Original ratings | 100,000 |
-| Ratings after join | 99,991 |
-| Users | 943 |
-| Movies | 1,681 |
-| Mean rating | 3.530 |
-| User–Item sparsity | 93.692% |
-| Avg. ratings / user | 106.0 |
-| Avg. ratings / movie | 59.5 |
+- **Users:** 943
+- **Movies:** 1,681
+- **Ratings after join:** 99,991
+- **User–Item matrix sparsity:** 93.6921%
 
-Main data files:
+Movie metadata includes title, year, directors, actors, and genres. The processed data also contains user/movie indices used by the recommendation models.
 
-- `u.data`: 100,000 ratings containing `user_id`, `movie_id`, `rating`, and `timestamp`.
-- `movielens_100k.csv`: extended movie metadata including title, year, directors, actors, and genres.
+## 📈 Model Evaluation
 
-## 5. Workflow
+| Model | RMSE | MAE |
+|---|---:|---:|
+| Item-based kNN | 0.971243 | 0.758880 |
+| Matrix Factorization | 0.924668 | 0.727684 |
+| Neural Collaborative Filtering | **0.931588** | **0.735622** |
 
-![Embedding pipeline](images/embedding_pipeline.png)
+> Lower RMSE and MAE indicate better prediction performance.
+
+The comparison helps evaluate traditional collaborative filtering methods against the NCF approach used for the interactive application.
+
+## 🌐 Streamlit Web PoC
+
+The trained NCF model is exported and used for inference in a Streamlit application.
+
+The Web PoC allows users to:
+
+1. Select a User ID.
+2. Select the number of recommendations.
+3. Generate personalized Top-N recommendations.
+4. View predicted ratings.
+5. Exclude movies already rated by the selected user.
+
+### Recommendation workflow
 
 ```text
-Data collection
-      ↓
-Data cleaning & preprocessing
-      ↓
-EDA
-      ↓
-User / Movie ID encoding
-      ↓
-Train / Validation / Test split
-      ↓
-Baseline: Item-based kNN + Matrix Factorization
-      ↓
-Neural Collaborative Filtering (GMF + MLP)
-      ↓
-RMSE / MAE evaluation
-      ↓
-Streamlit Web PoC
+User ID
+   ↓
+Load trained NCF parameters
+   ↓
+Generate predictions for candidate movies
+   ↓
+Remove already-rated movies
+   ↓
+Sort by predicted rating
+   ↓
+Return Top-N recommendations
 ```
 
-## 6. Data Preprocessing
+### Screenshots
 
-Main steps:
+> Update the filenames below if your actual screenshots in `images/` use different names.
 
-1. Load ratings and movie metadata.
-2. Join datasets using `movie_id`.
-3. Convert `timestamp` to datetime.
-4. Handle missing movie metadata.
-5. Check duplicate User–Movie pairs.
-6. Prepare genre information for EDA.
-7. Encode User IDs and Movie IDs into continuous indices for Embedding.
-8. Calculate User–Item matrix sparsity.
-9. Save the cleaned dataset as `movielens_cleaned.csv`.
+![Streamlit Web PoC](images/streamlit_home.png)
 
-Nine ratings were removed during the join because the corresponding `movie_id` was missing from the metadata. Missing values in `directors`, `actors`, and `genres` were filled with `"Unknown"`.
+![Recommendation Result](images/recommendation_result.png)
 
-![ID encoding pipeline](images/id_encoding_pipeline.png)
-
-## 7. Exploratory Data Analysis
-
-EDA covers:
-
-- Rating distribution.
-- Top 10 most-rated genres.
-- Number of ratings per user.
-- Number of ratings per movie.
-- Long-tail distribution analysis.
-
-Rating 4 received the largest number of ratings with **34,170 ratings**, around **34.2%** of all ratings. Drama and Comedy were the most frequently rated genres.
-
-![EDA overview](images/eda_overview.png)
-
-### Long-tail distribution
-
-The dataset exhibits a clear long-tail pattern: a small group of popular movies receives a large share of interactions, while many movies receive relatively few ratings.
-
-![Long-tail distribution](images/long_tail_distribution.png)
-
-## 8. Embedding-based Representation Learning
-
-NCF uses **Representation Learning** instead of relying only on manually engineered features.
-
-User IDs and Movie IDs are mapped through Embedding layers to learn latent feature vectors. The experiment uses **8-dimensional embeddings for both GMF and MLP branches**, which is appropriate for the moderate dataset size and helps reduce overfitting.
-
-![NCF architecture](images/ncf_architecture.png)
-
-## 9. Models
-
-### 9.1 Item-based kNN
-
-Computes **Cosine Similarity** between movies based on their rating vectors.
-
-- `K = 20`
-
-### 9.2 Matrix Factorization
-
-Uses a **Biased Matrix Factorization** model:
-
-- Latent factors: `K = 20`
-- Epochs: `25`
-- Learning rate: `0.01`
-- Regularization: `0.05`
-- Optimizer: SGD
-
-### 9.3 Neural Collaborative Filtering (NCF)
-
-The proposed model combines:
-
-- **GMF (Generalized Matrix Factorization)** for linear interactions.
-- **MLP (Multi-Layer Perceptron)** for higher-order nonlinear interactions.
-
-### Main hyperparameters
-
-| Parameter | Value |
-|---|---:|
-| GMF embedding | 8 |
-| MLP embedding | 8 |
-| Hidden layers | 16 → 8 |
-| Batch size | 256 |
-| Learning rate | 0.001 |
-| L2 regularization | 1e-4 |
-| Early Stopping patience | 5 |
-| Maximum epochs | 40 |
-
-The NCF training process stopped early at **epoch 11** after validation performance stopped improving.
-
-## 10. Data Split
-
-From 99,991 cleaned ratings:
-
-- **Test:** 20% = 19,999
-- **Train:** 80% = 79,992
-- The Train split was further divided into:
-  - **Training:** 71,992
-  - **Validation:** 8,000
-
-The Test set remained completely independent for the final evaluation.
-
-![Dataset split](images/dataset_split.png)
-
-## 11. Model Evaluation
-
-Because the task is **rating prediction (regression)**, the project uses:
-
-- **RMSE (Root Mean Squared Error)**
-- **MAE (Mean Absolute Error)**
-
-### Test-set results
-
-| Model | RMSE | MAE | Training Time |
-|---|---:|---:|---:|
-| Item-based kNN | 0.9712 | 0.7589 | 0.8 s |
-| Matrix Factorization (SVD) | **0.9208** | **0.7251** | 28.8 s |
-| NCF (GMF + MLP) | 0.9313 | 0.7353 | **3.9 s** |
-
-![Model comparison](images/model_comparison_chart.png)
-
-### Findings
-
-- **Matrix Factorization** achieved the best RMSE and MAE in the reported experiment.
-- **NCF** clearly outperformed Item-based kNN in both error metrics.
-- NCF trained substantially faster than Matrix Factorization.
-- NCF did not outperform Matrix Factorization in pure prediction accuracy on MovieLens 100K, which is consistent with the moderate dataset size and relatively small embedding dimension.
-- NCF was still selected for deployment because of its competitive accuracy and better potential for integrating additional features.
-
-## 12. Web Proof of Concept
-
-The thesis also develops a **Streamlit Web Proof of Concept** to demonstrate practical deployment of the NCF model.
-
-Main interaction areas include:
-
-- User ID input / selection.
-- Top-N recommendation control.
-- Recommended movie cards.
-- Movie title, year, genre, and predicted score.
-- Basic statistics from the selected user's rating history.
-
-The trained model is loaded into memory when the server starts, avoiding model reloading for every user interaction.
-
-![Web integration flow](images/web_integration_flow.png)
-
-> **Note:** The current repository emphasizes the data, modeling, and experimental components. If the Streamlit application source is added later, an `app/` directory and corresponding run instructions can be included.
-
-## 13. Repository Structure
+## 📁 Project Structure
 
 ```text
 movie-recommendation-deep-learning/
+│
+├── app/
+│   └── app.py
+│
 ├── code/
-│   └── movie_recommendation.ipynb
+│   └── movie_recommendation_streamlit.ipynb
+│
 ├── data/
 │   ├── u.data
-│   ├── movielens_100k.csv
-│   └── movielens_cleaned.csv
+│   └── movielens_100k.csv
+│
+├── models/
+│   └── ncf_params.npz
+│
 ├── images/
-│   ├── eda_overview.png
-│   ├── model_comparison_chart.png
-│   ├── ncf_architecture.png
-│   ├── embedding_pipeline.png
-│   ├── id_encoding_pipeline.png
-│   ├── long_tail_distribution.png
-│   ├── dataset_split.png
-│   └── web_integration_flow.png
-├── .gitignore
+│   ├── streamlit_home.png
+│   └── recommendation_result.png
+│
 ├── requirements.txt
+├── .gitignore
 └── README.md
 ```
 
-## 14. Technologies
+> Raw datasets and generated model binaries can be excluded from GitHub when appropriate. See `.gitignore`.
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-learn
-- Jupyter Notebook
-- Neural Collaborative Filtering
-- GMF
-- MLP
-- Adam
-- Streamlit
+## ⚙️ Installation
 
-## 15. Installation
+Clone the repository:
 
 ```bash
 git clone https://github.com/thang19814/movie-recommendation-deep-learning.git
 cd movie-recommendation-deep-learning
 ```
 
-Create a virtual environment:
+Create and activate a virtual environment:
 
-```bash
+### Windows
+
+```powershell
 python -m venv .venv
-```
-
-Activate it on Windows:
-
-```bash
 .venv\Scripts\activate
 ```
 
@@ -282,54 +184,77 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-## 16. Run the Notebook
+## 🚀 Run the Streamlit Web PoC
 
-```bash
-jupyter notebook code/movie_recommendation.ipynb
+Make sure the trained model is available at:
+
+```text
+models/ncf_params.npz
 ```
 
-**Note:** the notebook uses relative dataset paths. When running it in another environment, make sure the working directory is configured correctly or update the paths.
+Then run:
 
-## 17. Limitations
+```bash
+python -m streamlit run app/app.py
+```
 
-According to the thesis:
+The application will be available at:
 
-- MovieLens 100K is much smaller than real-world commercial recommendation datasets.
-- Comprehensive hyperparameter optimization using Grid Search or Bayesian Optimization was not performed.
-- Top-N ranking metrics such as Precision@K, Recall@K, and NDCG@K were not evaluated.
-- Cold-start for new users and new movies is not fully addressed.
-- The Web application remains a Proof of Concept and does not yet include production features such as authentication, real-time feedback storage, or large-scale deployment.
+```text
+http://localhost:8501
+```
 
-## 18. Future Work
+## 🧪 Reproduce the Model
 
-- Scale experiments to MovieLens 1M, 10M, or 25M.
-- Perform automated hyperparameter optimization.
-- Add Precision@K, Recall@K, and NDCG@K.
-- Incorporate content features such as genre, director, and actor into a Hybrid Recommender.
-- Improve cold-start handling.
-- Upgrade the Web application toward production deployment.
-- Explore advanced architectures such as AutoRec, CDAE, and Graph Neural Networks.
+1. Open `code/movie_recommendation_streamlit.ipynb`.
+2. Run the notebook from data collection through training and evaluation.
+3. Run the NCF model export cell.
+4. The trained parameters will be saved to `models/ncf_params.npz`.
+5. Run the Streamlit application.
 
-## 19. Academic Information
+## 🛠️ Technologies
 
-- **University:** Nguyen Tat Thanh University
-- **Faculty:** Faculty of Information Technology
-- **Major:** Data Science
-- **Student:** Dinh Xuan Thang
-- **Cohort:** 2023
-- **Supervisor:** M.Sc. Pham Dinh Tai
-- **Project period:** 01/03/2026 – 30/04/2026
+- Python
+- NumPy
+- Pandas
+- Scikit-learn
+- Matplotlib
+- Seaborn
+- Jupyter Notebook
+- Streamlit
+- Git / GitHub
 
----
+## 🎯 Skills Demonstrated
 
-## Academic report reference
+- Data preprocessing
+- Exploratory data analysis
+- Collaborative filtering
+- Recommendation systems
+- Matrix Factorization
+- Neural Collaborative Filtering
+- Embedding-based modeling
+- Model evaluation
+- NumPy-based neural network implementation
+- Model inference
+- Streamlit application development
+- Git/GitHub project organization
 
-This repository is based on the major project:
+## 📌 Future Improvements
 
-**“Phát triển ứng dụng gợi ý phim nhằm cá nhân hóa trải nghiệm người dùng sử dụng công nghệ Học sâu”**
+- Add movie posters and richer movie metadata
+- Add user preference/history visualization
+- Hyperparameter tuning for NCF
+- Compare additional recommendation algorithms
+- Improve cold-start handling
+- Deploy the Streamlit application online
+- Add automated experiment tracking
 
----
+## 👤 Author
 
-# License / Usage
+**Thang Xuan**
 
-This repository is intended for academic and portfolio purposes. Please refer to the original dataset terms before redistributing the MovieLens data.
+GitHub: https://github.com/thang19814
+
+## 📄 License
+
+This project is intended for educational and portfolio purposes.

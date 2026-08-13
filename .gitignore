@@ -1,25 +1,82 @@
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
 
-# Virtual environment
+# Virtual environments
 .venv/
 venv/
 env/
+ENV/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
 
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment / secrets
-.env
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
+# IDE / Editor
 .vscode/
 .idea/
 
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python build / distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage / cache
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
 # Logs
 *.log
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Local / generated datasets
+# Keep raw/local datasets out of GitHub.
+data/*.csv
+data/*.zip
+data/u.data
+data/u.item
+data/u.user
+data/u.genre
+data/u.occupation
+data/u1.base
+data/u1.test
+data/u2.base
+data/u2.test
+data/u3.base
+data/u3.test
+data/u4.base
+data/u4.test
+data/u5.base
+data/u5.test
+
+# Trained model artifacts
+models/*.npz
+models/*.pkl
+models/*.pickle
+models/*.joblib
+models/*.h5
+models/*.keras
+models/*.pt
+models/*.pth
