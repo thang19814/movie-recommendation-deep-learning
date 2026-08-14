@@ -251,10 +251,10 @@ http://localhost:8501
 
 ## 👤 Author
 
-**Thang Xuan**
+**Thang Dinh**
 
 GitHub: https://github.com/thang19814
 
-## 📄 License
+## 📄 Note
 
-This project is intended for educational and portfolio purposes.
+This project is intended for educational.
